@@ -17,13 +17,10 @@ public class ApplicationController {
     @Autowired
     private ApplicationService service;
 
-    // ✅ APPLY JOB (UPDATED)
+    // ✅ APPLY JOB (FIXED - USE RequestBody)
     @PostMapping("/apply")
-    public Application apply(
-            @RequestParam Long studentId,
-            @RequestParam Long jobId) {
-
-        return service.applyJob(studentId, jobId);
+    public Application apply(@RequestBody Application app) {
+        return service.applyJob(app);
     }
 
     // ✅ GET ALL APPLICATIONS
@@ -38,7 +35,7 @@ public class ApplicationController {
         return service.getApplicationsByStudent(id);
     }
 
-    // ✅ UPDATE STATUS (ENUM FIX)
+    // ✅ UPDATE STATUS
     @PutMapping("/{id}/status")
     public Application updateStatus(
             @PathVariable Long id,

@@ -90,4 +90,8 @@ public class ApplicationService {
     public long getRejectedCount(Long studentId) {
         return repository.countByStudentIdAndStatus(studentId, ApplicationStatus.REJECTED);
     }
+    public Application applyJob(Application app) {
+        app.setStatus(ApplicationStatus.APPLIED);
+        return repository.save(app);
+    }
 }

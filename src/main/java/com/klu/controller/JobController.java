@@ -6,13 +6,14 @@ import com.klu.repository.JobRepository;
 import com.klu.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin("*")
 public class JobController {
 
     @Autowired
@@ -21,40 +22,34 @@ public class JobController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ Add Job
+    // ✅ ADD JOB
     @PostMapping("/add/{employerId}")
-    public Job addJob(@PathVariable Long employerId, @RequestBody Job job) {
+    public ResponseEntity<Job> addJob(@PathVariable Long employerId, @RequestBody Job job) {
 
         User employer = userRepository.findById(employerId)
                 .orElseThrow(() -> new RuntimeException("Employer not found"));
 
         job.setEmployer(employer);
 
-        return jobRepository.save(job);
+        Job savedJob = jobRepository.save(job);
+        return ResponseEntity.ok(savedJob);
     }
 
-    // ✅ Get all jobs
+    // ✅ GET ALL JOBS
     @GetMapping
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll();
+    public ResponseEntity<List<Job>> getAllJobs() {
+        return ResponseEntity.ok(jobRepository.findAll());
     }
 
-    // ✅ Get jobs by employer
+    // ✅ GET JOBS BY EMPLOYER
     @GetMapping("/employer/{employerId}")
-    public List<Job> getJobsByEmployer(@PathVariable Long employerId) {
-        return jobRepository.findByEmployerId(employerId);
+    public ResponseEntity<List<Job>> getJobsByEmployer(@PathVariable Long employerId) {
+        return ResponseEntity.ok(jobRepository.findByEmployerId(employerId));
     }
 
-    // ✅ Delete job
-    @DeleteMapping("/{id}")
-    public String deleteJob(@PathVariable Long id) {
-        jobRepository.deleteById(id);
-        return "Job deleted";
-    }
-
-    // ✅ Update job
+    // ✅ UPDATE JOB
     @PutMapping("/{id}")
-    public Job updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
+    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
 
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
@@ -63,6 +58,19 @@ public class JobController {
         job.setCompanyName(updatedJob.getCompanyName());
         job.setDescription(updatedJob.getDescription());
 
-        return jobRepository.save(job);
+        Job saved = jobRepository.save(job);
+        return ResponseEntity.ok(saved);
+    }
+
+    // ✅ DELETE JOB
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteJob(@PathVariable Long id) {
+
+        if (!jobRepository.existsById(id)) {
+            throw new RuntimeException("Job not found");
+        }
+
+        jobRepository.deleteById(id);
+        return ResponseEntity.ok("Job deleted successfully");
     }
 }

@@ -1,12 +1,14 @@
 package com.klu.controller;
 
-import com.klu.service.ApplicationService;
+import com.klu.model.Application;
 import com.klu.repository.JobRepository;
+import com.klu.service.ApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,5 +39,11 @@ public class StudentController {
         map.put("rejected", rejected);
 
         return map;
+    }
+
+    // ✅ GET STUDENT APPLICATIONS
+    @GetMapping("/applications/{studentId}")
+    public List<Application> getStudentApplications(@PathVariable Long studentId) {
+        return applicationService.getApplicationsByStudent(studentId);
     }
 }
