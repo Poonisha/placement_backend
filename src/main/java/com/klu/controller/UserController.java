@@ -13,7 +13,14 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ UPDATE USER PROFILE
+    // ✅ GET USER BY ID
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ✅ UPDATE USER PROFILE (FIXED)
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
 
@@ -25,7 +32,11 @@ public class UserController {
 
         existing.setName(user.getName());
         existing.setEmail(user.getEmail());
-        existing.setPassword(user.getPassword());
+
+        // ✅ FIX: only update password if provided
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existing.setPassword(user.getPassword());
+        }
 
         return userRepository.save(existing);
     }
