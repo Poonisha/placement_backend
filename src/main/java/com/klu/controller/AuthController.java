@@ -52,7 +52,7 @@ public class AuthController {
             e.printStackTrace();
 
             res.put("success", false);
-            res.put("message", "Server error");
+            res.put("message", e.getMessage());
             return res;
         }
     }
@@ -64,6 +64,8 @@ public class AuthController {
         Map<String, Object> res = new HashMap<>();
 
         try {
+
+            System.out.println("LOGIN EMAIL: " + user.getEmail());
 
             User existing = userRepository.findByEmail(user.getEmail()).orElse(null);
 
@@ -97,23 +99,65 @@ public class AuthController {
         }
     }
 
-    // 🔥 ✅ ADD THIS (VERY IMPORTANT - CREATE TEST USER)
+    // ✅ CREATE SINGLE TEST USER (student)
     @GetMapping("/create-test-user")
-    public String createUser() {
+    public String createStudent() {
 
-        User existing = userRepository.findByEmail("student@gmail.com").orElse(null);
-
-        if (existing != null) {
-            return "User already exists";
+        if (userRepository.findByEmail("student@gmail.com").isPresent()) {
+            return "Student already exists";
         }
 
         User user = new User();
         user.setName("Student");
         user.setEmail("student@gmail.com");
         user.setPassword("1234");
-        user.setRole(Role.STUDENT); 
+        user.setRole(Role.STUDENT);
+
         userRepository.save(user);
 
-        return "User created successfully";
+        return "Student created";
+    }
+
+    // 🔥 ✅ CREATE ALL USERS (FINAL FIX)
+    @GetMapping("/setup-users")
+    public String setupUsers() {
+
+        if (userRepository.findByEmail("student@gmail.com").isEmpty()) {
+            User u = new User();
+            u.setName("Student");
+            u.setEmail("student@gmail.com");
+            u.setPassword("1234");
+            u.setRole(Role.STUDENT);
+            userRepository.save(u);
+        }
+
+        if (userRepository.findByEmail("employer@gmail.com").isEmpty()) {
+            User u = new User();
+            u.setName("Employer");
+            u.setEmail("employer@gmail.com");
+            u.setPassword("1234");
+            u.setRole(Role.EMPLOYER);
+            userRepository.save(u);
+        }
+
+        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            User u = new User();
+            u.setName("Admin");
+            u.setEmail("admin@gmail.com");
+            u.setPassword("1234");
+            u.setRole(Role.ADMIN);
+            userRepository.save(u);
+        }
+
+        if (userRepository.findByEmail("po@gmail.com").isEmpty()) {
+            User u = new User();
+            u.setName("Placement Officer");
+            u.setEmail("po@gmail.com");
+            u.setPassword("1234");
+            u.setRole(Role.PLACEMENT_OFFICER);
+            userRepository.save(u);
+        }
+
+        return "All users created successfully";
     }
 }
