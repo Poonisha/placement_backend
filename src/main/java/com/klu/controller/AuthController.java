@@ -92,7 +92,7 @@ public class AuthController {
             e.printStackTrace();
 
             res.put("success", false);
-            res.put("message", "Server error");
+            res.put("message", e.getMessage());
             return res;
         }
     }
