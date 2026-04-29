@@ -1,0 +1,62 @@
+package com.klu.config;
+
+import com.klu.model.User;
+import com.klu.model.Role;
+import com.klu.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DataSeeder implements CommandLineRunner {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public void run(String... args) {
+
+        // STUDENT
+        if (userRepository.findByEmail("student@gmail.com").isEmpty()) {
+            User student = new User();
+            student.setName("Student");
+            student.setEmail("student@gmail.com");
+            student.setPassword("1234");
+            student.setRole(Role.STUDENT);
+            userRepository.save(student);
+        }
+
+        // EMPLOYER
+        if (userRepository.findByEmail("employer@gmail.com").isEmpty()) {
+            User employer = new User();
+            employer.setName("Employer");
+            employer.setEmail("employer@gmail.com");
+            employer.setPassword("1234");
+            employer.setRole(Role.EMPLOYER);
+            userRepository.save(employer);
+        }
+
+        // ADMIN
+        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            User admin = new User();
+            admin.setName("Admin");
+            admin.setEmail("admin@gmail.com");
+            admin.setPassword("1234");
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+        }
+
+        // PLACEMENT OFFICER
+        if (userRepository.findByEmail("po@gmail.com").isEmpty()) {
+            User po = new User();
+            po.setName("Placement Officer");
+            po.setEmail("po@gmail.com");
+            po.setPassword("1234");
+            po.setRole(Role.PLACEMENT_OFFICER);
+            userRepository.save(po);
+        }
+
+        System.out.println("✅ Default users created!");
+    }
+}
